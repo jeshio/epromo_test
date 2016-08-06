@@ -2,6 +2,10 @@
 <div class="row">
   <h4>Таблица</h4>
   <p>
+    <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
+           ng-paste="onFilterChanged(filter)"
+           ng-change="onFilterChanged(filter)"
+           ng-keypress="onFilterChanged(filter)"/>
 
     <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
   </p>
