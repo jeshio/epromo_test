@@ -7,6 +7,10 @@
            ng-change="onFilterChanged(filter)"
            ng-keypress="onFilterChanged(filter)"/>
 
+   <label><input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows</label>
+   <label><input type="checkbox" ng-model="clicks" ng-change="setClicks(clicks)"/>Clicks</label>
+   <label><input type="checkbox" ng-model="sum" ng-change="setSum(sum)"/>Sum</label>
+
     <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
   </p>
 </div>

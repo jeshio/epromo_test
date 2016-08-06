@@ -77,9 +77,9 @@ angular.module('epromoApp')
         }
       },
       {headerName: "Phrase", field: "phrase"},
-      {headerName: "Shows", field: "shows", width: 100},
-      {headerName: "Clicks", field: "clicks", width: 100},
-      {headerName: "Sum", field: "sum", width: 100},
+      {headerName: "Shows", field: "shows", width: 100, filter: 'number'},
+      {headerName: "Clicks", field: "clicks", width: 100, filter: 'number'},
+      {headerName: "Sum", field: "sum", width: 100, filter: 'number'},
       // скрытые колонки для поиска
       {headerName: "", field: "groupSearch", hide: true},
       {headerName: "", field: "adSearch", hide: true},
@@ -104,16 +104,16 @@ angular.module('epromoApp')
 
     function getNodeChildDetails(rowItem) {
         if (rowItem.group) {
-            return {
-                // содержит детей
-                group: true,
-                // раскрытый спсиок - условие
-                expanded: rowItem.open,
+          return {
+            // содержит детей
+            group: true,
+            // раскрытый спсиок - условие
+            expanded: rowItem.open,
 
-                children: rowItem.adGroups,
-                field: 'group',
-                key: rowItem.group
-            };
+            children: rowItem.adGroups,
+            field: 'group',
+            key: rowItem.group
+          };
         } else if (rowItem.adGroup) {
           return {
               group: true,
@@ -125,5 +125,17 @@ angular.module('epromoApp')
         } else {
             return null;
         }
+    }
+
+    $scope.shows = $scope.clicks = $scope.sum = true;
+    // показ/скрытие колонок
+    $scope.setShows = function (value) {
+      $scope.gridOptions.columnApi.setColumnVisible('shows', value);
+    }
+    $scope.setClicks = function (value) {
+      $scope.gridOptions.columnApi.setColumnVisible('clicks', value);
+    }
+    $scope.setSum = function (value) {
+      $scope.gridOptions.columnApi.setColumnVisible('sum', value);
     }
 });

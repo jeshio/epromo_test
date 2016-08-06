@@ -90,7 +90,7 @@ body {
 
 // фиксы иерархии
 .ag-row-level-0 {
-  .ag-cell:nth-child(2) {
+  .ag-cell[colId="adGroup"] {
     span {
       display: none;
     }
@@ -98,7 +98,7 @@ body {
 }
 
 .ag-row-level-1 {
-  .ag-cell:first-child {
+  .ag-cell[colId="group"] {
     span {
       display: none;
     }
