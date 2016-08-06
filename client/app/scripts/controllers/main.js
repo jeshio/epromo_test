@@ -18,6 +18,8 @@ angular.module('epromoApp')
     var url = 'http://localhost:5000/api/table?startDate='+startDate+'&offset='+offset+'&limit='+limit;
     // обработанные записи для вывода в таблицу
     $scope.records = [];
+    // промежуточные итоги
+    var sumShows = 0, sumClicks = 0, sumSums = 0;
 
     // запрос данных
     $http.get(url).then(function (response) {
@@ -26,6 +28,9 @@ angular.module('epromoApp')
       angular.forEach(response.data.data, function (record) {
         var temp = { adSearch: record.adgroup_name, phrase: record.phrase, shows: record.stat.shows,
           clicks: record.stat.clicks, sum: record.stat.sum };
+        sumShows += record.stat.shows;
+        sumClicks += record.stat.clicks;
+        sumSums += record.stat.sum;
         // создание ассоциативного двухмерного массива - группа->группа реклам->фраза
         angular.forEach(record.campaign.groups, function (group) {
           if (groups[group.name] === undefined)
@@ -47,6 +52,7 @@ angular.module('epromoApp')
         $scope.records.push(temp);
       }
       // применение к таблице
+      $scope.records.unshift({shows: sumShows, clicks: sumClicks, sum: sumSums});
       $scope.gridOptions.api.setRowData($scope.records);
     });
 
