@@ -9,54 +9,14 @@
  */
 angular.module('epromoApp')
   .controller('MainCtrl', function($scope, $http) {
-    // параметры запроса
-    var startDate='2016-05-01',
-        offset = 10,
-        limit = 10;
-
-    // запрашиваемый скрипт
-    var url = 'http://localhost:5000/api/table?startDate='+startDate+'&offset='+offset+'&limit='+limit;
+    // количество значений на странице
+    $scope.pageSize = 10;
     // обработанные записи для вывода в таблицу
     $scope.records = [];
     // промежуточные итоги
     var sumShows = 0, sumClicks = 0, sumSums = 0;
 
-    // запрос данных
-    $http.get(url).then(function (response) {
-      // группирование данных
-      var groups = [];
-      angular.forEach(response.data.data, function (record) {
-        var temp = { adSearch: record.adgroup_name, phrase: record.phrase, shows: record.stat.shows,
-          clicks: record.stat.clicks, sum: record.stat.sum };
-        sumShows += record.stat.shows;
-        sumClicks += record.stat.clicks;
-        sumSums += record.stat.sum;
-        // создание ассоциативного двухмерного массива - группа->группа реклам->фраза
-        angular.forEach(record.campaign.groups, function (group) {
-          if (groups[group.name] === undefined)
-            groups[group.name] = [];
-
-          if (groups[group.name][record.adgroup_name] === undefined)
-            groups[group.name][record.adgroup_name] = [];
-
-          groups[group.name][record.adgroup_name].push(Object.assign(temp, {groupSearch:group.name}));
-        });
-      });
-      // преобразование массива в формат ad-grid
-      for (var groupName in groups) {
-        var normaliseAds = [];
-        for (var adName in groups[groupName]) {
-          normaliseAds.push({adGroup: adName, results: groups[groupName][adName]});
-        }
-        var temp = { group: groupName, adGroups: normaliseAds };
-        $scope.records.push(temp);
-      }
-      // применение к таблице
-      $scope.records.unshift({shows: sumShows, clicks: sumClicks, sum: sumSums});
-      $scope.gridOptions.api.setRowData($scope.records);
-    });
-
-    // ad-grid параметры
+    // ad-grid параметры колонок
     var columnDefs = [
       {headerName: "Group", cellRenderer: 'group', field: 'group',
       cellRendererParams: {
@@ -91,17 +51,55 @@ angular.module('epromoApp')
       {headerName: "", field: "adSearch", hide: true},
     ];
 
+    // параметры таблицы
     $scope.gridOptions = {
       columnDefs: columnDefs,
-      rowData: null,
+      // rowData: null,
       enableColResize: true,
       enableSorting: true,
       enableFilter: true,
+      rowModelType: 'pagination',
       getNodeChildDetails: getNodeChildDetails,
       onGridReady: function(params) {
           params.api.sizeColumnsToFit();
+          loadTable();
       }
     };
+
+    // запрос данных
+    function formatData(data) {
+      $scope.records = [];
+      // группирование данных
+      var groups = [];
+      angular.forEach(data, function (record) {
+        var temp = { adSearch: record.adgroup_name, phrase: record.phrase, shows: record.stat.shows,
+          clicks: record.stat.clicks, sum: record.stat.sum };
+        sumShows += record.stat.shows;
+        sumClicks += record.stat.clicks;
+        sumSums += record.stat.sum;
+        // создание ассоциативного двухмерного массива - группа->группа реклам->фраза
+        angular.forEach(record.campaign.groups, function (group) {
+          if (groups[group.name] === undefined)
+            groups[group.name] = [];
+
+          if (groups[group.name][record.adgroup_name] === undefined)
+            groups[group.name][record.adgroup_name] = [];
+
+          groups[group.name][record.adgroup_name].push(Object.assign(temp, {groupSearch:group.name}));
+        });
+      });
+      // преобразование массива в формат ad-grid
+      for (var groupName in groups) {
+        var normaliseAds = [];
+        for (var adName in groups[groupName]) {
+          normaliseAds.push({adGroup: adName, results: groups[groupName][adName]});
+        }
+        var temp = { group: groupName, adGroups: normaliseAds };
+        $scope.records.push(temp);
+      }
+      // добавление сумм к таблице
+      $scope.records.unshift({shows: sumShows, clicks: sumClicks, sum: sumSums});
+    }
 
     // фильтр по всем столбцам
     $scope.onFilterChanged = function (value) {
@@ -131,6 +129,32 @@ angular.module('epromoApp')
         } else {
             return null;
         }
+    }
+
+    $scope.onPageSizeChange = function () {
+      loadTable();
+    }
+
+    function loadTable() {
+      var dataSource = {
+        pageSize: $scope.pageSize, 
+        rowCount: -1,
+        getRows: function(params) {
+          // параметры запроса
+          var startDate='2016-05-01',
+              offset = params.startRow,
+              limit = params.endRow - params.startRow;
+
+          // запрашиваемый скрипт
+          var url = 'http://localhost:5000/api/table?startDate='+startDate+'&offset='+offset+'&limit='+limit;
+
+          $http.get(url).then(function (response) {
+            formatData(response.data.data);
+            params.successCallback($scope.records);
+          });
+        }
+      };
+      $scope.gridOptions.api.setDatasource(dataSource);
     }
 
     $scope.shows = $scope.clicks = $scope.sum = true;

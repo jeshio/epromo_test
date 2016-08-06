@@ -2,15 +2,25 @@
 <div class="row">
   <h4>Таблица</h4>
   <p>
+    <div style="height: 6%;">
+        Количество значений на странице:
+        <select ng-model="pageSize" ng-change="onPageSizeChange()">
+            <option value="10" selected="">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
+    </div>
+
     <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
            ng-paste="onFilterChanged(filter)"
            ng-change="onFilterChanged(filter)"
            ng-keypress="onFilterChanged(filter)"/>
 
-   <label><input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows</label>
-   <label><input type="checkbox" ng-model="clicks" ng-change="setClicks(clicks)"/>Clicks</label>
-   <label><input type="checkbox" ng-model="sum" ng-change="setSum(sum)"/>Sum</label>
+    <label><input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows</label>
+    <label><input type="checkbox" ng-model="clicks" ng-change="setClicks(clicks)"/>Clicks</label>
+    <label><input type="checkbox" ng-model="sum" ng-change="setSum(sum)"/>Sum</label>
 
-    <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
+    <div ag-grid="gridOptions" class="ag-blue" style="height: 500px"></div>
   </p>
 </div>
