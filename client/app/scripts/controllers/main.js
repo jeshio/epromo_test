@@ -137,7 +137,7 @@ angular.module('epromoApp')
 
     function loadTable() {
       var dataSource = {
-        pageSize: $scope.pageSize, 
+        pageSize: $scope.pageSize,
         rowCount: -1,
         getRows: function(params) {
           // параметры запроса
