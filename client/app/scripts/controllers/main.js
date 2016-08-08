@@ -150,7 +150,6 @@ angular.module('epromoApp')
           // запрашиваемый скрипт
           var url = 'http://localhost:5000/api/table?startDate='+$scope.startDate+
           '&endDate='+$scope.endDate+'&offset='+offset+'&limit='+limit;
-          console.log(url);
 
           $http.get(url).then(function (response) {
             formatData(response.data.data);

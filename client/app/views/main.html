@@ -1,45 +1,63 @@
+<div class="row">
+  <h4 class="page-header">Таблица</h4>
+      <div class="col-md-6">
+          <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
+            class="form-control"
+            ng-paste="onFilterChanged(filter)"
+            ng-change="onFilterChanged(filter)"
+            ng-keypress="onFilterChanged(filter)"/>
+      </div>
+      <div class="col-md-6 text-right">
+        Количество значений на странице:
+
+        <select ng-model="pageSize" ng-change="onPageSizeChange()"
+          ng-options="v for v in [10, 50, 100, 500]">
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-offset-6 form-inline text-center">
+          <label>
+            <input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows
+          </label>
+          <label>
+            <input type="checkbox" ng-model="clicks" ng-change="setClicks(clicks)"/>Clicks
+          </label>
+          <label>
+            <input type="checkbox" ng-model="sum" ng-change="setSum(sum)"/>Sum
+          </label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div ag-grid="gridOptions" class="ag-blue" style="height: 500px"></div>
+      </div>
+    </div>
+</div>
+
 <div class="row" ng-controller="GraphCtrl">
-  <h4>График</h4>
-  <p ng-controller="GraphCtrl">
-    <div style="height: 6%;">
+  <h4 class="page-header">График</h4>
+  <div class="col-md-12">
+    <div class="col-md-6 text-center">
         Шкала времени:
         <select data-ng-model="graph.graphUnit" ng-change="setUnit()"
           data-ng-options="v.unit for v in graph.units track by v.value">
         </select>
     </div>
 
-    <div>
+    <div class="col-md-6 text-center">
       <label><input type="checkbox" ng-model="showShows" ng-change="setData()" />Shows</label>
       <label><input type="checkbox" ng-model="showClicks" ng-change="setData()" />Clicks</label>
       <label><input type="checkbox" ng-model="showCTR" ng-change="setData()" />CTR</label>
     </div>
+  </div>
 
+  <div class="col-md-12">
     <canvas id="line" class="chart chart-line" chart-data="data"
     chart-labels="labels" chart-series="series" chart-options="options"
     chart-dataset-override="datasetOverride">
     </canvas>
-  </p>
-</div>
-
-<div class="row">
-  <h4>Таблица</h4>
-  <p>
-    <div style="height: 6%;">
-        Количество значений на странице:
-        <select ng-model="pageSize" ng-change="onPageSizeChange()"
-          ng-options="v for v in [10, 50, 100, 500]">
-        </select>
-    </div>
-
-    <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
-           ng-paste="onFilterChanged(filter)"
-           ng-change="onFilterChanged(filter)"
-           ng-keypress="onFilterChanged(filter)"/>
-
-    <label><input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows</label>
-    <label><input type="checkbox" ng-model="clicks" ng-change="setClicks(clicks)"/>Clicks</label>
-    <label><input type="checkbox" ng-model="sum" ng-change="setSum(sum)"/>Sum</label>
-
-    <div ag-grid="gridOptions" class="ag-blue" style="height: 500px"></div>
-  </p>
+  </div>
 </div>
