@@ -1,3 +1,25 @@
+<div class="row" ng-controller="GraphCtrl">
+  <h4>График</h4>
+  <p ng-controller="GraphCtrl">
+    <div style="height: 6%;">
+        Шкала времени:
+        <select data-ng-model="graph.graphUnit" ng-change="setUnit()"
+          data-ng-options="v.unit for v in graph.units track by v.value">
+        </select>
+    </div>
+
+    <div>
+      <label><input type="checkbox" ng-model="showShows" ng-change="setData()" />Shows</label>
+      <label><input type="checkbox" ng-model="showClicks" ng-change="setData()" />Clicks</label>
+      <label><input type="checkbox" ng-model="showCTR" ng-change="setData()" />CTR</label>
+    </div>
+
+    <canvas id="line" class="chart chart-line" chart-data="data"
+    chart-labels="labels" chart-series="series" chart-options="options"
+    chart-dataset-override="datasetOverride">
+    </canvas>
+  </p>
+</div>
 
 <div class="row">
   <h4>Таблица</h4>

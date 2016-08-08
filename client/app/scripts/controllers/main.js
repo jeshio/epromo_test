@@ -13,6 +13,9 @@ angular.module('epromoApp')
     $scope.pageSize = 10;
     // обработанные записи для вывода в таблицу
     $scope.records = [];
+
+    $scope.startDate = "2016-07-01";
+    $scope.endDate = "";
     // промежуточные итоги
     var sumShows = 0, sumClicks = 0, sumSums = 0;
 
@@ -62,7 +65,7 @@ angular.module('epromoApp')
       getNodeChildDetails: getNodeChildDetails,
       onGridReady: function(params) {
           params.api.sizeColumnsToFit();
-          loadTable();
+          $scope.loadTable();
       }
     };
 
@@ -132,21 +135,22 @@ angular.module('epromoApp')
     }
 
     $scope.onPageSizeChange = function () {
-      loadTable();
+      $scope.loadTable();
     }
 
-    function loadTable() {
+    $scope.loadTable = function() {
       var dataSource = {
         pageSize: $scope.pageSize,
         rowCount: -1,
         getRows: function(params) {
           // параметры запроса
-          var startDate='2016-05-01',
-              offset = params.startRow,
+          var offset = params.startRow,
               limit = params.endRow - params.startRow;
 
           // запрашиваемый скрипт
-          var url = 'http://localhost:5000/api/table?startDate='+startDate+'&offset='+offset+'&limit='+limit;
+          var url = 'http://localhost:5000/api/table?startDate='+$scope.startDate+
+          '&endDate='+$scope.endDate+'&offset='+offset+'&limit='+limit;
+          console.log(url);
 
           $http.get(url).then(function (response) {
             formatData(response.data.data);
