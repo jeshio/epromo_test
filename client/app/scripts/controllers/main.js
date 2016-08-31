@@ -161,7 +161,7 @@ angular.module('epromoApp')
               limit = params.endRow - params.startRow;
 
           // запрашиваемый скрипт
-          var url = 'http://localhost:3000/api/table?startDate='+$scope.startDate+
+          var url = '/api/table?startDate='+$scope.startDate+
           '&endDate='+$scope.endDate+'&offset='+offset+'&limit='+limit;
 
           $http.get(url).then(function (response) {

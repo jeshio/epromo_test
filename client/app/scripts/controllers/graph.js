@@ -65,9 +65,9 @@ angular.module('epromoApp')
         }
       };
     }
-    
+
     // запрашиваемый скрипт
-    var url = 'http://localhost:3000/api/chart?startDate='+
+    var url = '/api/chart?startDate='+
       $scope.startDate+'&endDate='+
       $scope.endDate;
 
