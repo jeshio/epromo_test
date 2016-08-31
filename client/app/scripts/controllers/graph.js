@@ -1,5 +1,5 @@
-'use strict';
 
+'use strict';
 /**
  * @ngdoc function
  * @name epromoApp.controller:GraphCtrl
@@ -9,6 +9,84 @@
  */
 angular.module('epromoApp')
   .controller('GraphCtrl', function ($scope, $http) {
+    // применение данных к графику
+    $scope.setData = function() {
+      $scope.datasetOverride = [];
+      $scope.series = [];
+      $scope.labels = $scope.groupedData.map(function (a) { return new Date(a.stat_date) });
+      $scope.clicks = $scope.groupedData.map(function (a) { return a.clicks });
+      $scope.shows = $scope.groupedData.map(function (a) { return a.shows });
+      $scope.CTR = $scope.groupedData.map(function (a) { return a.CTR });
+
+      $scope.data = [];
+      // отображаемые кривые
+      if ($scope.showClicks) {
+        $scope.data.push($scope.clicks);
+        $scope.series.push("Clicks");
+        $scope.datasetOverride.push({ yAxisID: 'y-axis-1' });
+      }
+      if ($scope.showShows) {
+        $scope.data.push($scope.shows);
+        $scope.series.push("Shows");
+        $scope.datasetOverride.push({ yAxisID: 'y-axis-1' });
+      }
+      if ($scope.showCTR) {
+        $scope.data.push($scope.CTR);
+        $scope.series.push("CTR");
+        $scope.datasetOverride.push({ yAxisID: 'y-axis-2' });
+      }
+      $scope.applyOptions();
+    }
+
+    // применение параметров
+    $scope.applyOptions = function () {
+      $scope.yAxes = [
+        {
+          id: 'y-axis-1',
+          type: 'linear',
+          display: $scope.showShows || $scope.showClicks,
+          position: 'left'
+        },
+        {
+          id: 'y-axis-2',
+          type: 'linear',
+          display: $scope.showCTR,
+          position: 'right'
+        }
+      ];
+      $scope.options = {
+        responsive: true,
+        scales: {
+            xAxes: [{
+              type: "time",
+              time: $scope.time
+            }],
+            yAxes: $scope.yAxes
+        }
+      };
+    }
+    
+    // запрашиваемый скрипт
+    var url = 'http://localhost:3000/api/chart?startDate='+
+      $scope.startDate+'&endDate='+
+      $scope.endDate;
+
+    // данные графика
+    $scope.clicks = $scope.shows = $scope.CTR = [];
+    // показываемые кривые, по-умолчанию показывать всё
+    $scope.showClicks = $scope.showShows = $scope.showCTR = true;
+
+    // данные с сервера
+    $scope.response = [];
+    // обработанные данные для вывода в график
+    $scope.groupedData = [];
+
+    // запрос данных
+    $http.get(url).then(function (response) {
+      $scope.groupedData = $scope.response = response.data.data;
+      $scope.setData();
+    });
+
     // шкалы времени
     $scope.graph = {
       units: [
@@ -31,20 +109,17 @@ angular.module('epromoApp')
     // настройки графика
     $scope.labels = [];
     $scope.series = ['Clicks', 'Shows', 'CTR'];
+    $scope.datasetOverride = [];
     $scope.data = [];
     $scope.time = {
       format: 'YYYY-MM-DD',
       tooltipFormat: 'YYYY-MM-DD',
     };
+    $scope.yAxes = [];
     $scope.options = {
-      responsive: true,
-      scales: {
-          xAxes: [{
-            type: "time",
-            time: $scope.time
-          }]
-      }
+      responsive: true
     };
+    $scope.applyOptions();
 
     // объединение сгруппированных данных
     function reduceData(groupedData) {
@@ -94,59 +169,7 @@ angular.module('epromoApp')
           break;
       }
       // применение изменений к графику
-      $scope.options = {
-        responsive: true,
-        scales: {
-            xAxes: [{
-              type: "time",
-              time: $scope.time
-            }]
-        }
-      };
       $scope.setData();
     }
 
-    // запрашиваемый скрипт
-    var url = '/api/chart?startDate='+
-      $scope.startDate+'&endDate='+
-      $scope.endDate;
-
-    // данные графика
-    $scope.clicks = $scope.shows = $scope.CTR = [];
-    // показываемые кривые, по-умолчанию показывать всё
-    $scope.showClicks = $scope.showShows = $scope.showCTR = true;
-
-    // данные с сервера
-    $scope.response = [];
-    // обработанные данные для вывода в график
-    $scope.groupedData = [];
-
-    // запрос данных
-    $http.get(url).then(function (response) {
-      $scope.groupedData = $scope.response = response.data.data;
-      $scope.setData();
-    });
-
-    // применение данных к графику
-    $scope.setData = function() {
-      $scope.series = [];
-      $scope.labels = $scope.groupedData.map(function (a) { return new Date(a.stat_date) });
-      $scope.clicks = $scope.groupedData.map(function (a) { return a.clicks });
-      $scope.shows = $scope.groupedData.map(function (a) { return a.shows });
-      $scope.CTR = $scope.groupedData.map(function (a) { return a.CTR });
-
-      $scope.data = [];
-      if ($scope.showClicks) {
-        $scope.data.push($scope.clicks);
-        $scope.series.push("Clicks");
-      }
-      if ($scope.showShows) {
-        $scope.data.push($scope.shows);
-        $scope.series.push("Shows");
-      }
-      if ($scope.showCTR) {
-        $scope.data.push($scope.CTR);
-        $scope.series.push("CTR");
-      }
-    }
-  });
+});

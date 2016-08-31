@@ -16,8 +16,6 @@ angular.module('epromoApp')
 
     $scope.startDate = "2016-07-01";
     $scope.endDate = "";
-    // промежуточные итоги
-    var sumShows = 0, sumClicks = 0, sumSums = 0;
 
     // ad-grid параметры колонок
     var columnDefs = [
@@ -71,15 +69,16 @@ angular.module('epromoApp')
 
     // запрос данных
     function formatData(data) {
+      // промежуточные итоги
+      var sumShows = 0, sumClicks = 0, sumSums = 0;
       $scope.records = [];
       // группирование данных
       var groups = [];
+      var groupClicks, groupShows, groupSum, clicks, shows, sum;
       angular.forEach(data, function (record) {
         var temp = { adSearch: record.adgroup_name, phrase: record.phrase, shows: record.stat.shows,
           clicks: record.stat.clicks, sum: record.stat.sum };
-        sumShows += record.stat.shows;
-        sumClicks += record.stat.clicks;
-        sumSums += record.stat.sum;
+
         // создание ассоциативного двухмерного массива - группа->группа реклам->фраза
         angular.forEach(record.campaign.groups, function (group) {
           if (groups[group.name] === undefined)
@@ -93,13 +92,27 @@ angular.module('epromoApp')
       });
       // преобразование массива в формат ad-grid
       for (var groupName in groups) {
+        groupClicks = groupShows = groupSum = 0;
         var normaliseAds = [];
         for (var adName in groups[groupName]) {
-          normaliseAds.push({adGroup: adName, results: groups[groupName][adName]});
+          clicks = shows = sum = 0;
+          for (var phrase in groups[groupName][adName]) {
+            clicks += groups[groupName][adName][phrase].clicks;
+            shows += groups[groupName][adName][phrase].shows;
+            sum += groups[groupName][adName][phrase].sum;
+          }
+          groupClicks += clicks;
+          groupShows += shows;
+          groupSum += sum;
+          normaliseAds.push({adGroup: adName, shows: shows, clicks: clicks, sum: sum, results: groups[groupName][adName]});
         }
-        var temp = { group: groupName, adGroups: normaliseAds };
+        var temp = { group: groupName, shows: groupShows, clicks: groupClicks, sum: groupSum, adGroups: normaliseAds };
         $scope.records.push(temp);
+        sumShows += groupShows;
+        sumClicks += groupClicks;
+        sumSums += groupSum;
       }
+
       // добавление сумм к таблице
       $scope.records.unshift({shows: sumShows, clicks: sumClicks, sum: sumSums});
     }
@@ -148,7 +161,7 @@ angular.module('epromoApp')
               limit = params.endRow - params.startRow;
 
           // запрашиваемый скрипт
-          var url = '/api/table?startDate='+$scope.startDate+
+          var url = 'http://localhost:3000/api/table?startDate='+$scope.startDate+
           '&endDate='+$scope.endDate+'&offset='+offset+'&limit='+limit;
 
           $http.get(url).then(function (response) {
