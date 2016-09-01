@@ -13,7 +13,8 @@ angular
     'ngResource',
     'ngRoute',
     'agGrid',
-    'chart.js'
+    'chart.js',
+    'datePicker'
   ])
   .config(function ($routeProvider) {
     $routeProvider

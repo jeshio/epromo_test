@@ -65,11 +65,10 @@ angular.module('epromoApp')
         }
       };
     }
-
-    // запрашиваемый скрипт
-    var url = '/api/chart?startDate='+
-      $scope.startDate+'&endDate='+
-      $scope.endDate;
+    $scope.chart = {
+      startDate: moment("2016-07-01"),
+      endDate: moment("2016-09-01")
+    };
 
     // данные графика
     $scope.clicks = $scope.shows = $scope.CTR = [];
@@ -82,10 +81,18 @@ angular.module('epromoApp')
     $scope.groupedData = [];
 
     // запрос данных
-    $http.get(url).then(function (response) {
-      $scope.groupedData = $scope.response = response.data.data;
-      $scope.setData();
-    });
+    $scope.loadGraph = function () {
+      // запрашиваемый скрипт
+      var url = '/api/chart?startDate='+
+        $scope.chart.startDate.format("YYYY-MM-DD")+'&endDate='+
+        $scope.chart.endDate.format("YYYY-MM-DD");
+
+      $http.get(url).then(function (response) {
+        $scope.groupedData = $scope.response = response.data.data;
+        $scope.setData();
+      });
+    }
+    $scope.loadGraph();
 
     // шкалы времени
     $scope.graph = {

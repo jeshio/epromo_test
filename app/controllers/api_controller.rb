@@ -5,7 +5,7 @@ class ApiController < ApplicationController
 
   def table
     url = "http://epa-dev2.e-promo.ru/?r=site/testtabledata&startDate=#{table_params[:startDate]}
-      &offset=#{table_params[:offset]}&limit=#{table_params[:limit]}"
+      &endDate=#{table_params[:endDate]}&offset=#{table_params[:offset]}&limit=#{table_params[:limit]}"
 
     render json: JSON.load(open(url))
   end
@@ -20,7 +20,7 @@ class ApiController < ApplicationController
   private
 
     def table_params
-      params.permit(:startDate, :offset, :limit)
+      params.permit(:startDate, :endDate, :offset, :limit)
     end
 
     def chart_params

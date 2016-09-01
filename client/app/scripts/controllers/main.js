@@ -14,8 +14,10 @@ angular.module('epromoApp')
     // обработанные записи для вывода в таблицу
     $scope.records = [];
 
-    $scope.startDate = "2016-07-01";
-    $scope.endDate = "";
+    $scope.table = {
+      startDate: moment("2016-07-01"),
+      endDate: moment("2016-07-25")
+    };
 
     // ad-grid параметры колонок
     var columnDefs = [
@@ -161,8 +163,8 @@ angular.module('epromoApp')
               limit = params.endRow - params.startRow;
 
           // запрашиваемый скрипт
-          var url = '/api/table?startDate='+$scope.startDate+
-          '&endDate='+$scope.endDate+'&offset='+offset+'&limit='+limit;
+          var url = '/api/table?startDate='+$scope.table.startDate.format("YYYY-MM-DD")+
+          '&endDate='+$scope.table.endDate.format("YYYY-MM-DD")+'&offset='+offset+'&limit='+limit;
 
           $http.get(url).then(function (response) {
             formatData(response.data.data);
