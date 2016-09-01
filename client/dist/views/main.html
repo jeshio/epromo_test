@@ -1,15 +1,10 @@
-<div class="row">
-  <h4 class="page-header">Таблица</h4>
-      <input date-time ng-model="table.startDate" date-change="loadTable" view="date" min-view="date" format="YYYY-MM-DD" />
-      <input date-time ng-model="table.endDate" date-change="loadTable" view="date" min-view="date" format="YYYY-MM-DD" />
+<h4 class="page-header">Таблица</h4>
 
-      <div class="col-md-6">
-          <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
-            class="form-control"
-            ng-paste="onFilterChanged(filter)"
-            ng-change="onFilterChanged(filter)"
-            ng-keypress="onFilterChanged(filter)"/>
-      </div>
+<div class="row">
+    <div class="col-md-6 form-inline">
+      <input class="form-control" date-time ng-model="table.startDate" date-change="loadTable" view="date" min-view="date" format="YYYY-MM-DD" />
+      <input class="form-control" date-time ng-model="table.endDate" date-change="loadTable" view="date" min-view="date" format="YYYY-MM-DD" />
+    </div>
       <div class="col-md-6 text-right">
         Количество значений на странице:
 
@@ -20,7 +15,15 @@
     </div>
 
     <div class="row">
-      <div class="col-md-offset-6 form-inline text-center">
+      <div class="col-md-6">
+          <input placeholder="Поиск по всей таблице" type="text" ng-model="filter"
+            class="form-control"
+            ng-paste="onFilterChanged(filter)"
+            ng-change="onFilterChanged(filter)"
+            ng-keypress="onFilterChanged(filter)"/>
+      </div>
+
+      <div class="col-md-6 form-inline text-center">
           <label>
             <input type="checkbox" ng-model="shows" ng-change="setShows(shows)"/>Shows
           </label>
@@ -50,9 +53,9 @@
         </select>
     </div>
 
-    <div class="col-md-6 text-center">
-      <input date-time ng-model="chart.startDate" date-change="loadGraph" view="date" min-view="date" format="YYYY-MM-DD" />
-      <input date-time ng-model="chart.endDate" date-change="loadGraph" view="date" min-view="date" format="YYYY-MM-DD" />
+    <div class="col-md-6 text-center form-inline">
+      <input date-time class="form-control" ng-model="chart.startDate" date-change="loadGraph" view="date" min-view="date" format="YYYY-MM-DD" />
+      <input date-time class="form-control" ng-model="chart.endDate" date-change="loadGraph" view="date" min-view="date" format="YYYY-MM-DD" />
     </div>
 
     <div class="col-md-3 text-center">
